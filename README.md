@@ -67,10 +67,6 @@ Parameters:
 
 Contributions are welcome! Please fork the repository and submit a pull request with your enhancements.
 
-## License
-
-[Specify your license here.]
-
 ---
 
 Happy coding!
