@@ -1,37 +1,39 @@
-# FastCampAgentes
+[![Linter: Ruff](https://img.shields.io/badge/Linter-Ruff-brightgreen?style=flat-square)](https://github.com/charliermarsh/ruff)
+# React ReAct Agent
 
-FastCampAgentes is an agent-driven project designed to streamline the creation and execution of React applications using the ReAct methodology.
+React ReAct Agent is an agent-driven project designed to streamline the creation and execution of React applications using the ReAct methodology.
 
 ## Overview
 
-This project leverages multiple agents to:
-- Generate code based on a project idea.
-- Save the generated code as a JavaScript file.
-- Run the code to start the React project.
+This project leverages a single agent powered by three distinct prompts:
+- A code generation prompt that builds React projects with a focus on responsiveness and appealing design.
+- A system prompt that manages the agent’s behavior.
+- A README summarization prompt that extracts key details from GitHub repositories.
 
-The agents include:
-- **ReactReActAgent**: Builds React projects with a focus on responsiveness and beautiful design.
-- **README Summarization Agent**: Summarizes README files from GitHub repositories to highlight key technical and non-technical aspects.
+The agent performs the following steps:
+- Gather project ideas and additional details.
+- Generate code based on the provided project summary.
+- Save and run the generated code to launch the React project.
 
 ## How It Works
 
 1. **Project Description**: The user describes the project idea (e.g., "Build a portfolio website").
 2. **Information Gathering**: The agent asks follow-up questions to collect additional details (e.g., site sections, purpose, etc.).
-3. **Code Generation**: The process involves generating code using stored information from prior steps.
+3. **Code Generation**: The agent generates code using the three prompts.
 4. **Saving & Running Code**: The generated code is saved as a JavaScript file (e.g., using `save_code`) and then executed (`run_code`) to start the project.
 
 ## Key Functions & Tools
 
 - **save_code**: Saves the generated code to the user's computer by accepting a file name.
 - **run_code**: Executes the saved JavaScript code to launch the React project.
-- **make_code**: (Referenced in the agents) Generates the code based on compiled project details.
+- **make_code**: Generates the code based on the project summary and additional details.
 
 ## Getting Started
 
 1. Ensure you have Python and Node.js installed.
 2. Configure your environment as needed.
 3. Run the main Python script to start the agent interaction.
-4. Follow the prompts to describe your project, answer follow-up questions, and let the agents handle the rest.
+4. Follow the prompts to describe your project, answer follow-up questions, and let the agent handle the rest.
 
 ## Directory Structure
 
@@ -40,20 +42,20 @@ The agents include:
 ├── src
 │   ├── python
 │   │   ├── agent
-│   │   │   ├── prompt.py        # Contains prompt definitions for the agents
-│   │   │   ├── react_react_agent.py  # Agent implementation for React projects with ReAct
-│   │   │   └── tools.py         # Tool definitions used by agents (e.g., save_code, run_code)
+│   │   │   ├── prompt.py             // Contains prompt definitions for the agent
+│   │   │   ├── react_react_agent.py  // Agent implementation for React projects with ReAct
+│   │   │   └── tools.py              // Tool definitions used by the agent (e.g., save_code, run_code)
 │   │   ├── models
-│   │   │   └── code_data.py     # pydantic model to store the generated React code
+│   │   │   └── code.py               // pydantic model to store the generated React code
 │   └── utils
-│         ├── colors.py          # Module for colored printing
-│         ├── printer.py         # Module for printing messages
-│         └── search_tool.py     # Module for search functionality
+│         ├── colors.py               // Module for colored printing
+│         ├── printer.py              // Module for printing messages
+│         └── search_tool.py          // Module for search functionality
 └── README.md
 ```
 
 ## CLI Usage
-The command-line interface (CLI) lets you directly interact with the React ReAct agent. For example, you can run the agent with:
+The command-line interface (CLI) lets you directly interact with the React ReAct Agent. For example, you can run the agent with:
 ```
 python src/main.py --grok_api_key="your_grok_api_key" --github_access_token="your_github_token" --starting_prompt="Your prompt message" [--verbose]
 ```

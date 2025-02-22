@@ -9,7 +9,7 @@ TOOLS = [
                 "properties": {
                     "username": {
                         "type": "string",
-                        "description": "The user's github username. Must be only a string value!"
+                        "description": "The user's github username. Ask him before using this tool."
                     }
                 },
                 "required": ["username"]
@@ -37,33 +37,20 @@ TOOLS = [
         "type": "function",
         "function": {
             "name": "make_code",
-            "description": "Generates the code for the project.",
+            "description": "Calling this tool generates the code for the project using the stored information.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "idea": {
+                    "project_summary": {
                         "type": "string",
-                        "description": "The idea for the project"
+                        "description": "The summary of the project. Make it simple."
+                    },
+                    "project_name": {
+                        "type": "string",
+                        "description": "The name of the project."
                     }
                 },
-                "required": ["idea"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "save_code",
-            "description": "Saves the generated code to the user's computer.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "The name of the file to save the code. Must be only a string value!"
-                    }
-                },
-                "required": ["name"]
+                "required": ["project_summary", "project_name"]
             }
         }
     },
@@ -78,5 +65,5 @@ TOOLS = [
                 "required": []
             }
         }
-    },
+    }
 ]

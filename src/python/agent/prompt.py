@@ -44,8 +44,11 @@ Example:
 
 - assistant: "Okay, I have all the information I need. Let's start building the project."
 - assistant: Tool Call: make_code -> This action generates the code for the project using the stored information.
-- assistant: Tool Call: save_code -> This action saves the generated code to the user's computer.
 - assistant: Tool Call: run_code -> This action runs the generated code to start the project.
+
+Remember:
+These Tool Calls are examples of actual tool calls you will make during the project building process.
+**Never generate tool calls in the text response.**
 """
 
 README_SUMMARIZATION_PROMPT = """
@@ -54,4 +57,24 @@ You have been assigned to read through the README files of the user's github rep
 You are a skilled reader.
 You must find the main points of the README files to show the technical and non-technical aspects of the projects.
 Respond only with the main points of the README files.
+"""
+
+CODE_GENERATION_PROMPT = """
+You must now generate the code for the project.
+Remember to write consistent and clean javascript code.
+Return the code enclosed in triple sticks.
+Remember:
+You must generate an App component, and export it as default.
+You need to generate code that can be pasted in a single file.
+Don't forget to include the necessary dependencies, styles and scripts.
+Don't import files, place the css in the main code.
+Don't generate the package.json file, it will be generated automatically.
+Example:
+```
+function App() {
+    return "Hello World!";
+}
+
+export default App;
+```
 """
