@@ -57,10 +57,10 @@ The agent performs the following steps:
 ## CLI Usage
 The command-line interface (CLI) lets you directly interact with the React ReAct Agent. For example, you can run the agent with:
 ```
-python src/main.py --grok_api_key="your_grok_api_key" --github_access_token="your_github_token" --starting_prompt="Your prompt message" [--verbose]
+python src/main.py --groq_api_key="your_groq_api_key" --github_access_token="your_github_token" --starting_prompt="Your prompt message" [--verbose]
 ```
 Parameters:
-- --grok_api_key (-gk): Specify your Grok API key.
+- --groq_api_key (-gk): Specify your Groq API key.
 - --github_access_token (-gh): Provide your Github access token.
 - --starting_prompt (-p): Set the initial prompt for your interaction.
 - --verbose (-v): Enable verbose mode for additional logging.

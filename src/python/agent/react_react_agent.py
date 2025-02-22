@@ -26,7 +26,7 @@ load_dotenv('.env.local')
 
 os.environ["PYDEVD_WARN_EVALUATION_TIMEOUT"] = "60"
 
-GROQ_API_KEY = os.getenv('GROK_API_KEY')
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 PROJECT_PATH = os.getenv('PROJECT_PATH')
 
 class ReactReActAgent:
@@ -67,7 +67,7 @@ class ReactReActAgent:
         }
 
     def chat(self, first_message: str) -> None:
-        """Starts the chat with the Grok API."""
+        """Starts the chat with the Groq API."""
         while True:
             response = self.get_response(first_message)
             print_assistant_message(response)
@@ -77,7 +77,7 @@ class ReactReActAgent:
             first_message = user_input
 
     def generate_bare_response(self, system: str, message: str) -> str:
-        """Generates a bare response from the Grok API."""
+        """Generates a bare response from the Groq API."""
         response = self.client.chat.completions.create(
             messages=[{
                 "role": "system",
@@ -97,7 +97,7 @@ class ReactReActAgent:
             tool_call_depth: int = 0,
             tool_choice: str = 'auto'
             ) -> str | None:
-        """Gets the response from the Grok API."""
+        """Gets the response from the Groq API."""
         self._messages.append({
             "role": role,
             "content": message
@@ -130,7 +130,7 @@ class ReactReActAgent:
             "content": response.choices[0].message.content
             })
         content = response.choices[0].message.content
-        return content or "No response from the Grok API."
+        return content or "No response from the Groq API."
 
     def check_for_implicit_tool_call(self, message: str) -> List[ChatCompletionMessageToolCall] | None:
         """Checks for an implicit tool call in the assistants message."""
@@ -169,7 +169,7 @@ class ReactReActAgent:
             depth: int = 0,
             max_depth: int = 5
             ) -> str:
-        """Processes the tool calls from the Grok API."""
+        """Processes the tool calls from the Groq API."""
         if depth > max_depth:
             return "Max recursion depth reached."
 
