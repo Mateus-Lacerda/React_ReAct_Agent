@@ -69,6 +69,7 @@ You need to generate code that can be pasted in a single file.
 Don't forget to include the necessary dependencies, styles and scripts.
 Don't import files, place the css in the main code.
 Don't generate the package.json file, it will be generated automatically.
+Never call render, the render method will be called on another file.
 Example:
 ```
 function App() {

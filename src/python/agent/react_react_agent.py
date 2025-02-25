@@ -17,7 +17,7 @@ from python.agent.prompt import (
     REACT_REACT_AGENT_PROMPT,
     README_SUMMARIZATION_PROMPT,
 )
-from python.agent.tools import TOOLS
+from python.agent.tools import TOOLS, EDIT_CODE_TOOL
 from python.models.code import CodeData, CodeStatus
 from python.utils.printer import print_assistant_message, print_function_message
 from python.utils.search_tool import search_github
@@ -251,6 +251,8 @@ class ReactReActAgent:
 
         if not self.code_status.project_created:
             print_function_message(f"Creating project: {project_name}", verbose=self.verbose)
+            if not os.path.exists(code_path):
+                os.makedirs(code_path)
             creation_result = subprocess.run(
                 ["yarn", "create", "react-app", project_name],
                 cwd=code_path,
@@ -271,6 +273,7 @@ class ReactReActAgent:
         if not self.code_status.code_saved:
             print_function_message("Overwriting App.js file with generated code.", verbose=self.verbose)
             project_path = os.path.join(code_path, project_name)
+
             with open(os.path.join(project_path, "src", "App.js"), 'w') as file:
                 file.write(code)
 
@@ -318,4 +321,31 @@ Installation error: {installation_result.stderr.decode('utf-8')}\n
 Starting result: {starting_result.stdout.decode('utf-8')}
 Starting error: {starting_result.stderr.decode('utf-8')}\n
 """
+        self.tools.remove(tool for tool in self.tools if tool.get('function').get('name') == 'run_code')
+        self.tools.append(EDIT_CODE_TOOL)
         return result
+
+    def edit_code(self, changes: str) -> str:
+        """
+        Edits the generated code.
+
+        :param str changes: The changes to be made in the code.
+        """
+
+        editions_prompt = f"O usuário deseja fazer as seguintes alterações no código: {changes}"
+        editions_prompt += f"\nAs informações específicas do projeto são: {self.additional_infos}"
+        editions_prompt += f"\nEsse é o código que deverá ser editado: {self.code_data.code}"
+
+        new_code = self.generate_bare_response(
+            system=CODE_GENERATION_PROMPT,
+            message=editions_prompt
+            )
+
+        code_path = self.code_data.path
+        project_name = self.code_data.name
+
+        project_path = os.path.join(code_path, project_name)
+        with open(os.path.join(project_path, "src", "App.js"), 'a') as file:
+            file.write(new_code)
+
+        return "Code edited successfully."

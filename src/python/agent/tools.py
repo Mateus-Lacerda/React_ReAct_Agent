@@ -67,3 +67,20 @@ TOOLS = [
         }
     }
 ]
+
+EDIT_CODE_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "edit_code",
+        "description": "Edits the generated code.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "changes": {
+                    "type": "string",
+                    "description": "The changes to be made in the code."
+                }
+            },
+        }
+    }
+}
