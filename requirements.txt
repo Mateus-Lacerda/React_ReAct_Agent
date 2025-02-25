@@ -1,4 +1,4 @@
-groq
+openai
 pydantic
 python-dotenv
 requests

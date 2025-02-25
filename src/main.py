@@ -12,8 +12,8 @@ def load_env() -> None:
     load_dotenv('.env.local')
     if not os.getenv('PROJECT_PATH'):
         raise ValueError('PROJECT_PATH environment variable not found.')
-    if not os.getenv('GROQ_API_KEY'):
-        raise ValueError('GROQ_API_KEY environment variable not found.')
+    if not os.getenv('LLM_API_KEY'):
+        raise ValueError('LLM_API_KEY environment variable not found.')
     if not os.getenv('GH_TOKEN'):
         raise ValueError('GH_TOKEN environment variable not found.')
 
@@ -25,10 +25,10 @@ if __name__=='__main__':
 ---
 {cl.colored("First, create a .env.local file in the root directory with the following environment variables:", 'YELLOW')}
 {cl.colored("PROJECT_PATH=<your_react_project_path>", 'GREEN')}, {cl.colored("highly recommended to be placed inside the 'src' directory.", 'RED')}
-{cl.colored("GROQ_API_KEY=<your_groq_api_key>", 'GREEN')}
+{cl.colored("LLM_API_KEY=<your_llm_api_key>", 'GREEN')}
         """.strip()
         )
-    parser.add_argument('--groq_api_key', '-gk', type=str, help='The Groq API key.')
+    parser.add_argument('--llm_api_key', '-gk', type=str, help='The LLM API key.')
     parser.add_argument('--github_access_token', '-gh', type=str, help='The Github access token.')
     parser.add_argument('--starting_prompt', '-p', type=str, help='The starting prompt for the agent.')
     parser.add_argument('--verbose', '-v', action='store_true', help='The verbose mode for the agent.')
@@ -38,12 +38,12 @@ if __name__=='__main__':
         parser.print_help()
         sys.exit(0)
 
-    if args.groq_api_key:
+    if args.llm_api_key:
         if not os.path.exists('.env.local'):
             os.system('touch .env.local')
 
-        os.system(f'echo "GROQ_API_KEY={args.groq_api_key}" >> .env.local')
-        print(cl.colored('GROQ_API_KEY environment variable added to .env.local.', 'GREEN'))
+        os.system(f'echo "LLM_API_KEY={args.llm_api_key}" >> .env.local')
+        print(cl.colored('LLM_API_KEY environment variable added to .env.local.', 'GREEN'))
 
     if args.github_access_token:
         if not os.path.exists('.env.local'):

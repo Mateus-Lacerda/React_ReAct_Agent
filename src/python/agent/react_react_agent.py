@@ -6,8 +6,8 @@ import subprocess
 from typing import List
 
 from dotenv import load_dotenv
-from groq import BadRequestError, Groq
-from groq.types.chat.chat_completion_message_tool_call import (
+from openai import BadRequestError, OpenAI
+from openai.types.chat.chat_completion_message_tool_call import (
     ChatCompletionMessageToolCall,
     Function,
 )
@@ -26,14 +26,14 @@ load_dotenv('.env.local')
 
 os.environ["PYDEVD_WARN_EVALUATION_TIMEOUT"] = "60"
 
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+LLM_API_KEY = os.getenv('LLM_API_KEY')
 PROJECT_PATH = os.getenv('PROJECT_PATH')
 
 class ReactReActAgent:
     """Agent responsible for building React projects with ReAct."""
     def __init__(self, verbose: bool = False) -> None:
-        self.client = Groq(
-            api_key=GROQ_API_KEY
+        self.client = OpenAI(
+            api_key=LLM_API_KEY
         )
         self.verbose = verbose
         self.additional_infos = []
@@ -67,7 +67,7 @@ class ReactReActAgent:
         }
 
     def chat(self, first_message: str) -> None:
-        """Starts the chat with the Groq API."""
+        """Starts the chat with the LLM API."""
         while True:
             response = self.get_response(first_message)
             print_assistant_message(response)
@@ -77,7 +77,7 @@ class ReactReActAgent:
             first_message = user_input
 
     def generate_bare_response(self, system: str, message: str) -> str:
-        """Generates a bare response from the Groq API."""
+        """Generates a bare response from the LLM API."""
         response = self.client.chat.completions.create(
             messages=[{
                 "role": "system",
@@ -86,7 +86,7 @@ class ReactReActAgent:
                 "role": "user",
                 "content": message
             }],
-            model='llama-3.3-70b-versatile',
+            model='gpt-4o-mini',
         )
         return response.choices[0].message.content
 
@@ -97,7 +97,7 @@ class ReactReActAgent:
             tool_call_depth: int = 0,
             tool_choice: str = 'auto'
             ) -> str | None:
-        """Gets the response from the Groq API."""
+        """Gets the response from the LLM API."""
         self._messages.append({
             "role": role,
             "content": message
@@ -105,7 +105,7 @@ class ReactReActAgent:
         try:
             response = self.client.chat.completions.create(
                 messages=self.messages,
-                model='llama3-70b-8192',
+                model='gpt-4o-mini',
                 tools=self.tools,
                 tool_choice=tool_choice
             )
@@ -130,7 +130,7 @@ class ReactReActAgent:
             "content": response.choices[0].message.content
             })
         content = response.choices[0].message.content
-        return content or "No response from the Groq API."
+        return content or "No response from the LLM API."
 
     def check_for_implicit_tool_call(self, message: str) -> List[ChatCompletionMessageToolCall] | None:
         """Checks for an implicit tool call in the assistants message."""
@@ -169,7 +169,7 @@ class ReactReActAgent:
             depth: int = 0,
             max_depth: int = 5
             ) -> str:
-        """Processes the tool calls from the Groq API."""
+        """Processes the tool calls from the LLM API."""
         if depth > max_depth:
             return "Max recursion depth reached."
 
@@ -250,13 +250,14 @@ class ReactReActAgent:
         code = self.code_data.code
 
         if not self.code_status.project_created:
+            print_function_message(f"Creating project: {project_name}", verbose=self.verbose)
             creation_result = subprocess.run(
                 ["yarn", "create", "react-app", project_name],
                 cwd=code_path,
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                timeout=120
+                timeout=300
             )
             self.code_status.project_created = True
         else:
@@ -268,17 +269,19 @@ class ReactReActAgent:
             )
 
         if not self.code_status.code_saved:
+            print_function_message("Overwriting App.js file with generated code.", verbose=self.verbose)
             project_path = os.path.join(code_path, project_name)
             with open(os.path.join(project_path, "src", "App.js"), 'w') as file:
                 file.write(code)
 
+            print_function_message("Installing dependencies.", verbose=self.verbose)
             installation_result = subprocess.run(
                 ["yarn", "install"],
                 cwd=project_path,
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                timeout=120
+                timeout=300
             )
             self.code_status.code_saved = True
         else:
@@ -289,14 +292,23 @@ class ReactReActAgent:
                 stderr=b""
             )
 
-        starting_result = subprocess.run(
-            ["yarn", "start"],
-            cwd=project_path,
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=120
-        )
+        try:
+            print_function_message("Starting the project.", verbose=self.verbose)
+            starting_result = subprocess.run(
+                ["yarn", "start"],
+                cwd=project_path,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                timeout=120
+            )
+        except subprocess.TimeoutExpired:
+            starting_result = subprocess.CompletedProcess(
+                args=["yarn", "start"],
+                returncode=0,
+                stdout=b"The code is up!",
+                stderr=b""
+            )
 
         result = f"""
 Creation result: {creation_result.stdout.decode('utf-8')}
